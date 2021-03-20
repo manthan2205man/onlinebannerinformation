@@ -22,6 +22,7 @@ from validate_email import validate_email
 from . paytm import Checksum
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import *
+#manthan
 
 MERCHANT_KEY='tbQubBXKkCa5IloY'
 
