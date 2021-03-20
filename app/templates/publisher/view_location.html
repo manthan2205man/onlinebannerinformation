@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  .right {
+  position: absolute;
+  right: 0px;
+  width: 300px;
+  padding: 10px;
+}
+
+</style>
+
+<div class="right">
+  <a href="{% url 'add_marker' %}">
+
+  <button type="button" class="btn btn-info btn-lg">+Add Location</button></a>
+</div>
+<br>
+<BR>
+<br>
+<BR>
+<table class="table table-hover">
+  <thead>
+    <tr>
+
+      <th scope="col">Address</th>
+      <th scope="col">Latitude</th>
+      <th scope="col">Longitude</th>
+        <th scope="col">Height</th>
+        <th scope="col">Width</th>
+        <th scope="col">Image</th>
+        <th scope="col">Availability</th>
+        <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in data %}
+    <tr>
+
+      <td>{{i.address}}</td>
+      <td>{{i.latitude}}</td>
+      <td>{{i.longitude}}</td>
+        <td>{{i.height}}</td>
+      <td>{{i.width}}</td>
+        <td><image src="{{i.photo.url}}" height="50px" width="100px"> </image></td>
+      <td>{{i.to_date}}</td>
+        <td>
+
+           <a class="btn btn-primary" href="{% url 'edit_location' i.id %}">Edit</a>
+            <a class="btn btn-danger" href="{% url 'delete_location' i.id %}">Delete</a>
+
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

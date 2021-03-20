@@ -1,0 +1,97 @@
+{% extends "mapbase.html" %}
+{% block content %}
+<html>
+<head>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+<!-- search areas -->
+
+
+<!--map-->
+<div id="map" style="height:100%; width:100%"></div>
+
+</body>
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+
+<script>
+
+    {% if loc %}
+        var map_parameters = { center: {lat: {{loc.latitude}}, lng:{{loc.longitude}} }, zoom: 15 };
+    {% else %}
+	var map_parameters = { center: {lat: 21.4006, lng:72.9269}, zoom: 9 };
+    {% endif %}
+    var map = new google.maps.Map(document.getElementById('map'), map_parameters);
+
+
+
+   {% for i in data %}
+
+   var icons = {
+          on: {
+            icon: '{{ i.banner.publisher.logo.url }}'
+          },
+        };
+
+        var position1 = { position: {lat: {{ i.banner.latitude }}, lng: {{ i.banner.longitude }} }, map: map, icon:{url:icons.on.icon, scaledSize: new google.maps.Size(20, 20)} };
+        var marker = new google.maps.Marker(position1)
+
+        var window1 =
+        '<div class="container-fluid">'+
+        '<div class="row">'+
+        '<div class="col-sm-3">'+
+        '<h6><span style="color:blue; font-weight:bold"> Publisher: </span>'+
+        '<p><p><span style="color:blue; font-weight:bold"> Ad. types: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Price: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Status: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Size: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Address: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Available from: </span></h6>'+
+        '</div>'+
+
+        '<div class="col-sm-3">'+
+        '<h6><span style="color:black; font-weight:bold"> {{ i.banner.publisher.first_name }} </span>'+
+        '<p><p><span style="color:black; font-weight:bold"> {{ i.banner.ad_type }} </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.banner.price }} </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.banner.status }} </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.banner.height }} X {{ i.banner.width }} Feet </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.banner.address }} </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.banner.to_date }} <span style="color:black; font-weight:bold"></h6>'+
+        '</div>'+
+
+        '<div class="col-sm-6">'+
+
+        '<p><img src="{{ i.banner.photo.url }}" height="150" width="280">'+
+        {% if user.is_superuser %}
+        {% else %}
+        '<p align="right"><a class="btn btn-primary" href="{% url 'booknow' i.banner.id %}">Click Here For Book Now</a></b>'+
+        '<p align="right"><span style="color:black; font-weight:bold"><a href="{% url 'delete_save_banner' i.pk %}">Delete from save later</a></span>'+
+        {% endif %}
+
+        '</div>'+
+        '</div>'+
+        '</div>';
+
+
+        var infowindow = new google.maps.InfoWindow({ content: window1 });
+
+
+    google.maps.event.addListener(marker,'click', (function(marker,window1,infowindow){
+        return function() {
+           infowindow.setContent(window1);
+           infowindow.open(map,marker);
+        };
+    })(marker,window1,infowindow));
+
+    {% endfor %}
+
+</script>
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<BR>
+
+<div class="container"><br>
+    <form method="post">
+    {% csrf_token %}
+  <div class="row">
+
+ <div class="col">
+        <div class="form-group" name="startdate"> <!-- Date input -->
+        <label class="control-label" for="date">Date</label>
+        <input class="form-control" id="date" name="date" placeholder="YYYY-MM-DD" type="text"/>
+      </div>
+    </div>
+
+      <div class="col">
+        <div class="form-group" name="startdate"> <!-- Date input -->
+        <label class="control-label" for="date">Date</label>
+        <input class="form-control" id="date1" name="date1" placeholder="YYYY-MM-DD" type="text"/>
+      </div>
+    </div>
+
+
+       <div class="col">
+<button type="submit" class="btn btn-primary" id="btn" required="false">Filter</button>
+    </div>
+
+
+  </div>
+          </form>
+     </div>
+
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+        <th scope="col">Address</th>
+        <th scope="col">From-Date</th>
+        <th scope="col">To-Date</th>
+      <th scope="col">Image Banner</th>
+        <th scope="col">Action</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in data %}
+    <tr>
+
+      <td>{{i.customer.first_name|title}}</td>
+      <td>{{i.customer.username}}</td>
+      <td>{{i.customer.phone}}</td>
+      <td>{{i.customer.address}}</td>
+      <td>{{i.from_date}}</td>
+      <td>{{i.to_date}}</td>
+      <td><image src="{{i.photo.url}}" height="50px" width="100px"> </image></td>
+
+        <td>
+          {% if i.status == 'pending' %}
+          <a class="btn btn-primary" href="{% url 'booking_accept' i.id %}">Accept</a>
+            <a class="btn btn-danger" href="{% url 'booking_reject' i.id %}">Reject</a>
+
+          {% else %}
+            {{i.status}}
+          {% endif %}
+        </td>
+
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

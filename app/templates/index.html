@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    {% block content %}
+
+{%if messages %}
+        {% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+    {% endfor %}
+  {% endif %}
+
+
+
+
+<br>
+    <div align="center">
+
+
+
+
+                  {% if user.is_publisher %}
+<a href="{% url 'surat_pub_map' %}" type="submit" class="btn btn-primary"  required="false">Click here for banner's location with marker on map</a>
+{% else %}
+        <a href="{% url 'surat_cus_map' %}" type="submit" class="btn btn-primary"  required="false">Click here for banner's location with marker on map</a>
+
+                   {% endif %}
+
+
+
+        <br>
+<br>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d475364.30917387555!2d72.6422858770773!3d21.43774662007031!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1583156817748!5m2!1sen!2sin" width="1200" height="450" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
+    </div>
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+{% extends "mapbase.html" %}
+{% block content %}
+<html>
+<head>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+<!-- search areas -->
+
+<div class="container-fluid">
+    <br>
+    <form method="post">
+    {% csrf_token %}
+  <div class="row">
+      <!--home-->
+
+
+
+    <div class="col">
+
+       <div class="btn-group">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Select City
+  </button>
+  <div class="dropdown-menu">
+    <a class="dropdown-item" href="{% url 'surat_cus_map' %}">Surat</a>
+      <a class="dropdown-item" href="{% url 'bharuch_cus_map' %}">Bharuch</a>
+  </div>
+    </div>
+    </div>
+
+             <div class="col">
+    <a class="btn btn-primary" href="{% url 'compare_bharuch' %}" role="button">compare Publisher</a>
+    </div>
+
+      <div class="col">
+      <a onclick="getLocation()" class="btn btn-primary" role="button">Get Your Location</a>
+        </div>
+
+
+      </div>
+
+
+        <br>
+
+    <div class="row">
+
+    <div class="col-2">
+
+        Select Area of Surat
+        <select class="form-control" name="loation" required="false">
+             <option value="none">Area</option>
+        {% for i in data1 %}
+        <option value="{{ i.id }}">{{ i.place }}</option>
+         {% endfor %}
+    </select>
+<br>
+
+
+        Select Your Publisher
+        <select class="form-control" name="publisher" required="false">
+            <option value="none">Publisher</option>
+            {% for i in publisher %}
+        <option value="{{ i.id }}">{{ i.first_name }}</option>
+         {% endfor %}
+    </select>
+<br>
+
+
+    Select Add Types
+           <select class="form-control" name="advertisement_types">
+        <option value="none">Add Types</option>
+        {% for i in ad_data %}
+        <option value="{{ i.ad_type }}">{{ i.ad_type|title }}</option>
+         {% endfor %}
+    </select>
+<br>
+
+        Select Banner's Status
+        <select class="form-control" name="status" required="false">
+             <option value="none">Status</option>
+        {% for i in status_data %}
+        <option value="{{ i.status }}">{{ i.status }}</option>
+         {% endfor %}
+    </select>
+<br>
+
+        Select minimun price
+        <select class="form-control" name="min" required="false">
+             <option value="none">mini price</option>
+
+        <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="150">150</option>
+            <option value="300">300</option>
+
+    </select>
+<br>
+
+        Select maximum price
+        <select class="form-control" name="max" required="false">
+             <option value="none">max price</option>
+
+        <option value="300">300</option>
+            <option value="400">400</option>
+            <option value="500">500</option>
+            <option value="600">600</option>
+
+    </select>
+<br>
+<button type="submit" class="btn btn-primary" id="btn" required="false">Filter</button>
+
+</div>
+
+
+      </form>
+
+    <div class="col-10">
+
+
+
+
+
+
+
+
+
+
+
+
+<!--map-->
+<div id="map" style="height:100%; width:100%"></div>
+
+</body>
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+
+<script>
+
+    {% if loc %}
+        var map_parameters = { center: {lat: {{loc.latitude}}, lng:{{loc.longitude}} }, zoom: 15 };
+    {% else %}
+	var map_parameters = { center: {lat: 21.7051, lng:72.9959}, zoom: 11 };
+    {% endif %}
+
+    var map = new google.maps.Map(document.getElementById('map'), map_parameters);
+
+
+
+      var x = document.getElementById("map");
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+
+
+function showPosition(position) {
+
+var l1=position.coords.latitude
+var l2=position.coords.longitude
+
+  var position1 = { position: {lat: l1, lng: l2 }, map: map};
+        var marker = new google.maps.Marker(position1);
+}
+
+
+
+
+
+   {% for i in data %}
+
+   var icons = {
+          on: {
+            icon: '{{ i.publisher.logo.url }}'
+          },
+        };
+
+        var position1 = { position: {lat: {{ i.latitude }}, lng: {{ i.longitude }} }, map: map, icon:{url:icons.on.icon, scaledSize: new google.maps.Size(20, 20)} };
+        var marker = new google.maps.Marker(position1)
+
+        var window1 =
+         '<div class="container-fluid">'+
+        '<div class="row">'+
+        '<div class="col-sm-3">'+
+        '<h6><span style="color:blue; font-weight:bold"> Publisher: </span>'+
+        '<p><p><span style="color:blue; font-weight:bold"> Ad. types: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Price: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Status: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Size: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Address: </span>'+
+        '<p><span style="color:blue; font-weight:bold"> Available from: </span></h6>'+
+        '</div>'+
+
+        '<div class="col-sm-3">'+
+        '<h6><span style="color:black; font-weight:bold"> {{ i.publisher.first_name }} </span>'+
+        '<p><p><span style="color:black; font-weight:bold"> {{ i.ad_type }} </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.price }} </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.status }} </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.height }} X {{ i.width }} Feet </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.address }} </span>'+
+        '<p><span style="color:black; font-weight:bold"> {{ i.to_date }} <span style="color:black; font-weight:bold"></h6>'+
+        '</div>'+
+
+        '<div class="col-sm-6">'+
+
+        '<p><img src="{{ i.photo.url }}" height="150" width="280">'+
+        {% if user.is_superuser %}
+        {% else %}
+        '<p align="right"><a class="btn btn-primary" href="{% url 'booknow' i.pk %}">Click Here For Book Now</a></b>'+
+        '<p align="right"><span style="color:black; font-weight:bold"><a href="{% url 'save_banner' i.pk %}">Save for later</a></span> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp'+
+        '<span style="color:black; font-weight:bold"><a href="{% url 'add_compare' i.pk %}">Add compare</a></span>'+
+        {% endif %}
+
+        '</div>'+
+        '</div>'+
+        '</div>';
+
+        var infowindow = new google.maps.InfoWindow({ content: window1 });
+
+
+    google.maps.event.addListener(marker,'click', (function(marker,window1,infowindow){
+        return function() {
+           infowindow.setContent(window1);
+           infowindow.open(map,marker);
+        };
+    })(marker,window1,infowindow));
+
+    {% endfor %}
+
+
+
+</script>
+</div>
+</div>
+</body>
+</html>
+
+{% endblock %}

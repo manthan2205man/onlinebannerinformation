@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+    $(function (){
+    $("#btn").click(function(){
+
+      var pass=$('[name="password1"]').val();
+      var cpass=$('[name="password2"]').val();
+      if (pass != cpass) {
+        alert('Password do not match');
+        return false;
+      }
+      else
+      {
+      return true;
+      }
+
+
+
+
+
+
+  });
+});
+
+</script>
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3 col-sm-4">
+
+
+ {%if messages %}
+        {% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+    {% endfor %}
+  {% endif %}
+
+
+      <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary" id="btn">SignUp</button>
+  </form>
+
+      </div>
+    </div>
+</div>
+
+{% endblock %}

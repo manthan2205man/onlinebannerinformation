@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  .right {
+  position: absolute;
+  right: 0px;
+  width: 300px;
+  padding: 10px;
+}
+
+</style>
+<BR>
+<table class="table table-hover">
+  <thead>
+    <tr>
+
+      <th scope="col">Pub_Name</th>
+      <th scope="col">Cus_Name</th>
+      <th scope="col">From_date</th>
+        <th scope="col">To_date</th>
+      <th scope="col">Address</th>
+        <th scope="col">Image</th>
+        <th scope="col">Approval Status</th>
+        <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in data %}
+    <tr>
+
+      <td>{{i.publisher.first_name}}</td>
+      <td>{{i.customer.first_name}}</td>
+      <td>{{i.from_date}}</td>
+        <td>{{i.to_date}}</td>
+      <td>{{i.mapdata.address}}</td>
+        <td><image src="{{i.photo.url}}" height="50px" width="100px"> </image></td>
+      <td>{{i.status}}</td>
+
+        <td>
+         {%if i.pay_status == "approved" %}
+            {%endif%}
+      {%if i.status == "approved" and i.pay_status == "pending" %}
+
+<!--          <a class="btn btn-primary" href="{% url 'renew' i.id %}">renew</a>-->
+          <a class="btn btn-primary" href="{% url 'order_banner' i.id %}">order</a>
+            <a class="btn btn-danger" href="{% url 'delete_booking' i.id %}">Cancle</a>
+          {%endif%}
+
+          {%if i.status == "pending" %}
+          <a class="btn btn-danger" href="{% url 'delete_booking' i.id %}">Delete</a>
+
+          {%endif%}
+
+          {%if i.status == "rejected" %}
+            <a class="btn btn-danger" href="{% url 'delete_booking' i.id %}">Delete</a>
+          {%endif%}
+
+
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3 col-md-offset-3 col-sm-4"> </div>
+            <div class="col-md-6 col-md-offset-3 col-sm-4">
+
+
+
+<form method="POST">
+    {% csrf_token %}
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Order for Banner</legend>
+            <p>Are you sure you want to order this banner?</p>
+            {{ form }}
+    </fieldset>
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit">Order Now</button>
+            <a class="btn btn-primary-custom"
+               href="{% url 'home' %}">Cancel</a>
+    </div>
+</form>
+
+                </div>
+            <div class="col-md-3 col-md-offset-3 col-sm-4"> </div>
+          </div>
+    </div>
+</div>
+
+
+{% endblock %}

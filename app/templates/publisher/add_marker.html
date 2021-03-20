@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<html lang="en">
+<head>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+    <meta charset="UTF-8">
+    <title>Marker Adding</title>
+</head>
+<body>
+
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+
+
+
+<div class="container"> <br>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-5 col-sm-0">
+
+
+
+ {%if messages %}
+        {% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+{{ message }}
+  </div>
+{% endfor %}
+  {% endif %}
+<div class="row">
+    <div class="col-md-6">
+
+      <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary" id="btn">Add Marker</button>
+  </form>
+      </div>
+
+
+
+
+
+
+  </div>
+</div>
+
+<!--ri8-->
+
+<div class="col-md-6">
+<form method="post">
+    {% csrf_token %}
+    <div class="row">
+
+    <div class="col">
+        Select Area of {{ request.user.city }}
+        <select class="form-control" name="loation" required="false">
+             <option value="none">Area</option>
+        {% for i in data1 %}
+        <option value="{{ i.id }}">{{ i.place }}</option>
+         {% endfor %}
+    </select>
+    </div>
+
+         <div class="col">
+<button type="submit" class="btn btn-primary" required="false">Filter</button>
+    </div>
+    </div>
+    </form>
+
+
+    <div id="map" style="height:100%; width:100%"></div>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+
+<script>
+
+{% if loc %}
+        var map_parameters = { center: {lat: {{loc.latitude}}, lng:{{loc.longitude}} }, zoom: 15 };
+    {% else %}
+	var map_parameters = { center: {lat: 21.170240, lng:72.831062}, zoom: 11 };
+    {% endif %}
+    var map = new google.maps.Map(document.getElementById('map'), map_parameters);
+
+
+
+ google.maps.event.addListener(map, "click", function(event) {
+                // get lat/lon of click
+                var clickLat = event.latLng.lat();
+                var clickLon = event.latLng.lng();
+
+                // show in input box
+                document.getElementById("latitude").value = clickLat.toFixed(5);
+                document.getElementById("longitude").value = clickLon.toFixed(5);
+
+                  var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(clickLat,clickLon),
+                        map: map
+                     });
+            });
+
+
+</script>
+
+</div>
+  </div>
+</div>
+
+
+</body>
+</html>
+{% endblock %}

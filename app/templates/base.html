@@ -1,0 +1,891 @@
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Online Banner Information</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicons -->
+  <link href="{% static 'reveal/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'reveal/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+
+  <!-- Bootstrap CSS File -->
+  <link href="{% static 'reveal/lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Libraries CSS Files -->
+  <link href="{% static 'reveal/lib/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+  <link href="{% static 'reveal/lib/animate/animate.min.css' %}" rel="stylesheet">
+  <link href="{% static 'reveal/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'reveal/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+  <link href="{% static 'reveal/lib/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
+  <link href="{% static 'reveal/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+
+  <!-- Main Stylesheet File -->
+  <link href="{% static 'reveal/css/style.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+    Theme Name: Reveal
+    Theme URL: https://bootstrapmade.com/reveal-bootstrap-corporate-template/
+    Author: BootstrapMade.com
+    License: https://bootstrapmade.com/license/
+  ======================================================= -->
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+{% if user.is_authenticated %}
+  <script>
+  setInterval(function(){
+
+  $.ajax({
+    url:"{% url 'newUpdate' %}",
+    dataType:'json',
+    success: function (data) {
+      document.getElementById('not-count').innerHTML=data.count;
+     }
+  })
+
+
+{% if user.is_customer %}
+ $.ajax({
+    url:"{% url 'newUpdate1' %}",
+    dataType:'json',
+    success: function (data1) {
+      document.getElementById('not-count1').innerHTML=data1.count1;
+     }
+  })
+{% endif %}
+
+
+{% if user.is_publisher %}
+ $.ajax({
+    url:"{% url 'newUpdate_rs' %}",
+    dataType:'json',
+    success: function (data_rs) {
+      document.getElementById('not-count_rs').innerHTML=data_rs.count_rs;
+     }
+  })
+{% endif %}
+
+ },1000);
+
+
+ function display_notification(){
+      console.log('hello');
+
+{% if user.is_superuser %}
+    $.ajax({
+      url:"{% url 'new_not' %}",
+      dataType:'json',
+      success: function (data) {
+      document.getElementById('new').innerHTML='';
+        for(var i=0;i<data.record.length;i++){
+        console.log(data.record[i].first_name);
+          document.getElementById('new').innerHTML+='<li><a href="{% url 'admin_publisher_request' %}">Publisher request from '+ data.record[i].first_name+'</a></li>';
+
+			}
+		}
+      })
+      {% endif %}
+
+{% if user.is_publisher %}
+    $.ajax({
+      url:"{% url 'new_not' %}",
+      dataType:'json',
+      success: function (data) {
+      document.getElementById('new').innerHTML='';
+        for(var i=0;i<data.record.length;i++){
+        console.log(data.record[i].customer__first_name);
+          document.getElementById('new').innerHTML+='<li><a href="{% url 'booking_request' %}">New Booking request from '+ data.record[i].customer__first_name+'</a></li>';
+
+			}
+		}
+      })
+
+
+       $.ajax({
+      url:"{% url 'new_not_rs' %}",
+      dataType:'json',
+      success: function (data_rs) {
+       document.getElementById('new_rs').innerHTML='';
+        for(var i=0;i<data_rs.record.length;i++){
+
+          document.getElementById('new_rs').innerHTML+='<li><a href="{% url 'show_payment_done' %}"> '+ data_rs.record[i].customer__first_name+' done payment</a></li>';
+
+			}
+		}
+      })
+
+      {% endif %}
+
+     {% if user.is_customer %}
+        $.ajax({
+      url:"{% url 'new_not' %}",
+      dataType:'json',
+      success: function (data) {
+       document.getElementById('new').innerHTML='';
+        for(var i=0;i<data.record.length;i++){
+
+        console.log(data.record[i].customer__first_name);
+          document.getElementById('new').innerHTML+='<li><a href="{% url 'show_my_booking' %}"> '+ data.record[i].publisher__first_name+' '+ data.record[i].status+' your booking</a></li>';
+
+			}
+		}
+      })
+
+
+      $.ajax({
+      url:"{% url 'new_not1' %}",
+      dataType:'json',
+      success: function (data1) {
+       document.getElementById('new1').innerHTML='';
+        for(var i=0;i<data1.record.length;i++){
+
+          document.getElementById('new1').innerHTML+='<li><a href="{% url 'save_banner_map' %}"> You saved '+ data1.record[i].banner__publisher__first_name+' banner</a></li>';
+
+			}
+		}
+      })
+
+
+      {% endif %}
+ }
+  </script>
+
+  {% endif %}
+  <style>
+    .notification {
+<!--  background-color: #555;-->
+<!--  color: white;-->
+<!--  text-decoration: none;-->
+<!--  padding: 15px 26px;-->
+<!--  position: relative;-->
+<!--  display: inline-block;-->
+<!--  border-radius: 2px;-->
+}
+
+.notification:hover {
+<!--  background: red;-->
+}
+
+.notification .badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+}
+  </style>
+</head>
+
+<body id="body">
+
+  <!--==========================
+    Top Bar
+  ============================-->
+<!--  <section id="topbar" class="d-none d-lg-block">-->
+<!--    <div class="container clearfix">-->
+<!--      <div class="contact-info float-left">-->
+<!--        <i class="fa fa-envelope-o"></i> <a href="https://accounts.google.com/ServiceLogin/signinchooser?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin">bhavsarmanthan10@gmail.com</a>-->
+<!--        <i class="fa fa-phone"></i> +91 7874130988-->
+<!--      </div>-->
+<!--      <div class="social-links float-right">-->
+<!--        <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>-->
+<!--        <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>-->
+<!--        <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>-->
+<!--        <a href="#" class="google-plus"><i class="fa fa-google-plus"></i></a>-->
+<!--        <a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </section>-->
+
+  <!--==========================
+    Header
+  ============================-->
+  <header id="header">
+    <div class="container">
+
+      <div id="logo" class="pull-left">
+        <a href="{% url 'home' %}"><img data-0="width:155px;" data-300=" width:120px;" src="{% static 'reveal/img/logo.png' %}" alt=""></a>
+      </div>
+
+      <nav id="nav-menu-container">
+        <ul class="nav-menu">
+          <li class="menu-active"><a href="{% url 'home' %}">Home</a></li>
+
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'rating' %}">Rate Us</a>
+
+          {% if user.is_superuser %}
+
+          <li><a href="{% url 'surat_cus_map' %}">Admin's Location</a>
+
+          <li class="menu-has-children"><a href="">Graph</a>
+            <ul>
+              <li><a href="{% url 'admin_cus_pie_chart' %}">cus pie chart</a></li>
+              <li><a href="{% url 'admin_pub_pie_chart' %}">pub pie chart</a></li>
+
+            </ul>
+          </li>
+
+          <li class="menu-has-children"><a href="">Admin's settings</a>
+            <ul>
+              <li><a href="{% url 'admin_publisher_list' %}">Publisher List</a></li>
+              <li><a href="{% url 'admin_publisher_request' %}">Publisher Request</a></li>
+              <li><a href="{% url 'admin_customer_list' %}">Customer List</a></li>
+              <li><a href="{% url 'admin_order_banner' %}">Orders of Banner</a></li>
+              <li><a href="{% url 'admin_booknow' %}">Booking Details</a></li>
+              <li><a href="{% url 'admin_mapdata' %}">Mapdata Details</a></li>
+              <li><a href="{% url 'admin_rating' %}">admin rating</a></li>
+            </ul>
+          </li>
+
+          <li class="menu-has-children"><a href="">settings</a>
+            <ul>
+              <li><a href="{% url 'change_password' %}">change_password</a></li>
+              <li><a href="{% url 'cus_edit_profile' %}">Edit profile</a></li>
+              <li><a href="{% url 'delete_account' %}">Delete Account</a></li>
+            </ul>
+          </li>
+
+
+           {% endif %}
+
+          {% if user.is_publisher %}
+          <li><a href="{% url 'surat_pub_map' %}">Banner's Location</a></li>
+          <li class="menu-has-children"><a href="">Publisher Settings</a>
+            <ul>
+              <li><a href="{% url 'add_marker' %}">Add Marker</a></li>
+              <li><a href="{% url 'view_location' %}">View Location</a></li>
+              <li><a href="{% url 'booking_request' %}">Booking Request</a></li>
+              <li><a href="{% url 'show_payment_done' %}">Payment Done List</a></li>
+              <li><a href="{% url 'pub_cus_pie_chart' %}">Rating pie chart</a></li>
+            </ul>
+          </li>
+
+          <li class="menu-has-children"><a href="">settings</a>
+            <ul>
+              <li><a href="{% url 'change_password' %}">change_password</a></li>
+              <li><a href="{% url 'pub_edit_profile' %}">Edit profile</a></li>
+              <li><a href="{% url 'delete_account' %}">Delete Account</a></li>
+            </ul>
+          </li>
+
+           <li class="menu-has-children"> <a href="#" class="notification" onclick="display_notification()"><img border="0" src="{% static 'img/rs.png' %}" width="20" height="20">
+          <span class="badge" id="not-count_rs"></span></a>
+            <ul id="new_rs">
+            </ul>
+          </li>
+           {% endif %}
+
+          {% if user.is_customer %}
+          <li><a href="{% url 'feedback' %}">feedback</a></li>
+          <li><a href="{% url 'surat_cus_map' %}">Banner's Location</a></li>
+          <li class="menu-has-children"><a href="">Customer Settings</a>
+            <ul>
+              <li><a href="{% url 'show_my_booking' %}">My Booking</a></li>
+              <li><a href="{% url 'show_order_banner' %}">show order banner</a></li>
+              <li><a href="{% url 'show_save_banner' %}">Save for Later</a></li>
+              <li><a href="{% url 'show_add_compare' %}">Compare of Banner</a></li>
+              <li><a href="{% url 'pub_rating' %}">Rate for Publisher</a>
+            </ul>
+          </li>
+
+          <li class="menu-has-children"><a href="">settings</a>
+            <ul>
+              <li><a href="{% url 'change_password' %}">change_password</a></li>
+              <li><a href="{% url 'cus_edit_profile' %}">Edit profile</a></li>
+
+              <li><a href="{% url 'delete_account' %}">Delete Account</a></li>
+            </ul>
+          </li>
+
+          <li class="menu-has-children"> <a href="#" class="notification" onclick="display_notification()"><img border="0" src="{% static 'img/save.png' %}" width="20" height="20">
+          <span class="badge" id="not-count1"></span></a>
+            <ul id="new1">
+
+            </ul>
+          </li>
+
+
+          {% endif %}
+          <li class="menu-has-children"> <a href="#" class="notification" onclick="display_notification()"><img border="0" src="{% static 'img/notification.png' %}" width="20" height="20">
+          <span class="badge" id="not-count"></span></a>
+            <ul id="new">
+
+            </ul>
+          </li>
+
+          <li><a href="{% url 'logout' %}">Logout {{user.first_name}}</a></li>
+
+          {% else %}
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#team">Team</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="{% url 'enquiry' %}">Enquiry</a></li>
+          <li><a href="{% url 'surat_cus_map' %}">Banner's Location</a></li>
+
+          <li class="menu-has-children"><a href="">SignUp</a>
+            <ul>
+              <li><a href="{% url 'cus_register' %}">SignUp for Customer</a></li>
+              <li><a href="{% url 'pub_register' %}">SignUp for Publisher</a></li>
+            </ul>
+          </li>
+
+          <li><a href="{% url 'login_page' %}">Login</a></li>
+
+          {% endif %}
+
+
+        </ul>
+      </nav><!-- #nav-menu-container -->
+    </div>
+  </header><!-- #header -->
+
+  <!--==========================
+    Intro Section
+  ============================-->
+  <section id="intro">
+
+    <div class="intro-content">
+      <h2>Online  Banner <br>Information</h2>
+      <h3>Express the way of enlarging the business</h3>
+      <div>
+        <a href="{% url 'surat_cus_map' %}" class="btn-get-started scrollto">Get Started</a>
+        <a href="#portfolio" class="btn-projects scrollto">Our Projects</a>
+      </div>
+    </div>
+
+    <div id="intro-carousel" class="owl-carousel" >
+      <div class="item" style="background-image: url({% static 'reveal/img/intro-carousel/5.jpg' %});"></div>
+      <div class="item" style="background-image: url({% static 'reveal/img/intro-carousel/6.jpg' %});"></div>
+      <div class="item" style="background-image: url({% static 'reveal/img/intro-carousel/7.jpg' %});"></div>
+      <div class="item" style="background-image: url({% static 'reveal/img/intro-carousel/8.jpg' %});"></div>
+      <div class="item" style="background-image: url({% static 'reveal/img/intro-carousel/9.jpg' %});"></div>
+    </div>
+
+  </section><!-- #intro -->
+
+
+  {% block content %}
+
+
+  {% endblock %}
+
+
+  <main id="main">
+
+    <!--==========================
+      About Section
+    ============================-->
+    <section id="about" class="wow fadeInUp">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 about-img">
+            <img src="{% static 'reveal/img/svmit.jpg' %}" alt="">
+          </div>
+
+          <div class="col-lg-6 content">
+            <h2>We are from Shri S’ad Vidya Mandal Institute Of Technology, Bharuch</h2>
+            <h3>SVMIT</h3>
+
+            <ul>
+              <li><i class="ion-android-checkmark-circle"></i> SVMIT is managed by Shri S’ad Vidya Mandal trust popularly known as SVM established in 1954 as a result of inspiration and blessings of Swami Shri Atulanandji. To meet the ever increasing needs of technical personnel in Industry, as also to enhance the frontiers of knowledge in the field of technology, Shri S’ad Vidya Mandal Institute of Technology was established in August 1996 as a self finance Institute. The Institute has been approved by the All India Council for Technical Education, New Delhi and by the Government of Gujarat. In academic year 2011-12 our first batch under Gujarat Technological University (GTU) has graduated with almost 100% results in all the disciplines. Many of our students are in university toppers’ list..</li>
+              <li><i class="ion-android-checkmark-circle"></i> Shri S’ad Vidya Mandal was set up with the prime objective of making available facilities of higher education with emphasis on quality to the students of Bharuch and near by areas within their means. The Mandal is registered under the Societies registration Act of 1860 and also under the Bombay Public Trust Act 1950.</li>
+              <li><i class="ion-android-checkmark-circle"></i> We are from Final Year IT(Information Technology) Department.This is our project for customers and publishers at a different ace to their branches in Advertising of Banner using through they easily get updated about new banner and advertise adversary from their work.    </li>
+            </ul>
+
+          </div>
+        </div>
+
+      </div>
+    </section><!-- #about -->
+
+    <!--==========================
+      Services Section
+    ============================-->
+    <section id="services">
+      <div class="container">
+        <div class="section-header">
+          <h2>Services</h2>
+          <p> The basic services which we are going to provide is simple, reliable, affordable, Attractive GUI, Maps, Enterprises, Geolocation etc. </p>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-6">
+            <div class="box wow fadeInLeft">
+              <div class="icon"><i class="fa fa-bar-chart"></i></div>
+              <h4 class="title"><a href="">Statistics</a></h4>
+              <p class="description">We provide you the graphical and acurate information of how many of customers have been connected to this application and also we provide graphical view of a which publisher, at which location is being more used for the publicity.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="box wow fadeInRight">
+              <div class="icon"><i class="fa fa-picture-o"></i></div>
+              <h4 class="title"><a href=""></a>Banner Pics</h4>
+              <p class="description">Rapid and truthful data is being reached to the users for the betterment use of the business we have provided the proper Imageview of particular loacation. </p>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="box wow fadeInLeft" data-wow-delay="0.2s">
+              <div class="icon"><i class="fa fa-shopping-bag"></i></div>
+              <h4 class="title"><a href="">Enterprises</a></h4>
+              <p class="description">There are so many enterprises are connected with this website for betterment and having flexible business at higher level through web.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="box wow fadeInRight" data-wow-delay="0.2s">
+              <div class="icon"><i class="fa fa-map"></i></div>
+              <h4 class="title"><a href="">Maps</a></h4>
+              <p class="description">Providing the map which can easily identify the publishers that are linked and registered by which the banner location information is updated and you are able to make a deal through Book now link directly your banner.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- #services -->
+
+    <!--==========================
+      Clients Section
+    ============================-->
+<!--    <section id="clients" class="wow fadeInUp">-->
+<!--      <div class="container">-->
+<!--        <div class="section-header">-->
+<!--          <h2>Clients</h2>-->
+<!--          <p>Sed tamen tempor magna labore dolore dolor sint tempor duis magna elit veniam aliqua esse amet veniam enim export quid quid veniam aliqua eram noster malis nulla duis fugiat culpa esse aute nulla ipsum velit export irure minim illum fore</p>-->
+<!--        </div>-->
+
+<!--        <div class="owl-carousel clients-carousel">-->
+<!--          <img src="{% static 'reveal/img/clients/client-1.png' %}" alt="">-->
+<!--          <img src="{% static 'reveal/img/clients/client-2.png' %}" alt="">-->
+<!--          <img src="{% static 'reveal/img/clients/client-3.png' %}" alt="">-->
+<!--          <img src="{% static 'reveal/img/clients/client-4.png' %}" alt="">-->
+<!--          <img src="{% static 'reveal/img/clients/client-5.png' %}" alt="">-->
+<!--          <img src="{% static 'reveal/img/clients/client-6.png' %}" alt="">-->
+<!--          <img src="{% static 'reveal/img/clients/client-7.png' %}" alt="">-->
+<!--          <img src="{% static 'reveal/img/clients/client-8.png' %}" alt="">-->
+<!--        </div>-->
+
+<!--      </div>-->
+<!--    </section>&lt;!&ndash; #clients &ndash;&gt;-->
+
+    <!--==========================
+      Our Project Section
+    ============================-->
+    <section id="portfolio" class="wow fadeInUp">
+      <div class="container">
+        <div class="section-header">
+          <h2>Our Project</h2>
+          <p>Our Heartily Welcome to all the users in this website. Generally its a website for engaging and collabrating the Customer-Publisher relation to intensive the advertising carrier at the higher level. Here Below are some Graphical represenation of using this website and know the purpose behind for it. <b> So, Take A Look... </b> </p>
+        </div>
+      </div>
+
+      <div class="container-fluid">
+        <div class="row no-gutters">
+
+          <div class="col-lg-6 col-md-4">
+            <div class="portfolio-item wow fadeInUp">
+              <a href="{% static 'reveal/img/portfolio/10.png' %}" class="portfolio-popup">
+                <img src="{% static 'reveal/img/portfolio/10.png' %}" alt="">
+                <div class="portfolio-overlay">
+                  <div class="portfolio-info"><h2 class="wow fadeInUp">Suggestion Item 1</h2></div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-4">
+            <div class="portfolio-item wow fadeInUp">
+              <a href="{% static 'reveal/img/portfolio/2.png' %}" class="portfolio-popup">
+                <img src="{% static 'reveal/img/portfolio/2.png' %}" alt="">
+                <div class="portfolio-overlay">
+                  <div class="portfolio-info"><h2 class="wow fadeInUp">Suggestion Item 2</h2></div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-4">
+            <div class="portfolio-item wow fadeInUp">
+              <a href="{% static 'reveal/img/portfolio/3.png' %}" class="portfolio-popup">
+                <img src="{% static 'reveal/img/portfolio/3.png' %}" alt="">
+                <div class="portfolio-overlay">
+                  <div class="portfolio-info"><h2 class="wow fadeInUp">Suggestion Item 3</h2></div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-4">
+            <div class="portfolio-item wow fadeInUp">
+              <a href="{% static 'reveal/img/portfolio/4.png' %}" class="portfolio-popup">
+                <img src="{% static 'reveal/img/portfolio/4.png' %}" alt="">
+                <div class="portfolio-overlay">
+                  <div class="portfolio-info"><h2 class="wow fadeInUp">Suggestion Item 4</h2></div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+<!--          <div class="col-lg-3 col-md-4">-->
+<!--            <div class="portfolio-item wow fadeInUp">-->
+<!--              <a href="{% static 'reveal/img/portfolio/5.jpg' %}" class="portfolio-popup">-->
+<!--                <img src="{% static 'reveal/img/portfolio/5.jpg' %}" alt="">-->
+<!--                <div class="portfolio-overlay">-->
+<!--                  <div class="portfolio-info"><h2 class="wow fadeInUp">Portfolio Item 5</h2></div>-->
+<!--                </div>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          <div class="col-lg-3 col-md-4">-->
+<!--            <div class="portfolio-item wow fadeInUp">-->
+<!--              <a href="{% static 'reveal/img/portfolio/6.jpg' %}" class="portfolio-popup">-->
+<!--                <img src="{% static 'reveal/img/portfolio/6.jpg' %}" alt="">-->
+<!--                <div class="portfolio-overlay">-->
+<!--                  <div class="portfolio-info"><h2 class="wow fadeInUp">Portfolio Item 6</h2></div>-->
+<!--                </div>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          <div class="col-lg-3 col-md-4">-->
+<!--            <div class="portfolio-item wow fadeInUp">-->
+<!--              <a href="{% static 'reveal/img/portfolio/7.jpg' %}" class="portfolio-popup">-->
+<!--                <img src="{% static 'reveal/img/portfolio/7.jpg' %}" alt="">-->
+<!--                <div class="portfolio-overlay">-->
+<!--                  <div class="portfolio-info"><h2 class="wow fadeInUp">Portfolio Item 7</h2></div>-->
+<!--                </div>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          <div class="col-lg-3 col-md-4">-->
+<!--            <div class="portfolio-item wow fadeInUp">-->
+<!--              <a href="{% static 'reveal/img/portfolio/8.jpg' %}" class="portfolio-popup">-->
+<!--                <img src="{% static 'reveal/img/portfolio/8.jpg' %}" alt="">-->
+<!--                <div class="portfolio-overlay">-->
+<!--                  <div class="portfolio-info"><h2 class="wow fadeInUp">Portfolio Item 8</h2></div>-->
+<!--                </div>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          <div class="col-lg-3 col-md-4">-->
+<!--            <div class="portfolio-item wow fadeInUp">-->
+<!--              <a href="{% static 'reveal/img/portfolio/2.png' %}" class="portfolio-popup">-->
+<!--                <img src="{% static 'reveal/img/portfolio/2.png' %}" alt="">-->
+<!--                <div class="portfolio-overlay">-->
+<!--                  <div class="portfolio-info"><h2 class="wow fadeInUp">Portfolio Item 8</h2></div>-->
+<!--                </div>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+
+        </div>
+
+      </div>
+    </section><!-- #portfolio -->
+
+    <!--==========================
+      Testimonials Section
+    ============================-->
+    <section id="testimonials" class="wow fadeInUp">
+      <div class="container">
+        <div class="section-header">
+          <h2>Testimonials</h2>
+<!--          <p>In performing our project, we would like to express our thanks to the people who have helped us most throughout our project. We would like to show our gratitude to Project guide, Shri S’ad Vidya Mandal Institute of Technology for giving us a good guideline for our project throughout numerous consultations.</p>-->
+        </div>
+<!--        <div class="owl-carousel testimonials-carousel">-->
+
+            <div class="testimonial-item">
+              <p>
+                <img src="{% static 'reveal/img/quote-sign-left.png' %}" class="quote-sign-left" alt="">
+                In performing our project, we would like to express our thanks to the people who have helped us most throughout our project. We would like to show our gratitude to Project guide, Shri S’ad Vidya Mandal Institute of Technology for giving us a good guideline for our project throughout numerous consultations.
+                <img src="{% static 'reveal/img/quote-sign-right.png' %}" class="quote-sign-right" alt="">
+              </p>
+              <img src="{% static 'reveal/img/krutimam.png' %}" class="testimonial-img" alt="">
+              <h3>Dr. Kruti J. Dangarwala</h3>
+              <h4>PH.D in Computer Engineering (Our Guide)</h4>
+            </div>
+
+<!--            <div class="testimonial-item">-->
+<!--              <p>-->
+<!--                <img src="{% static 'reveal/img/quote-sign-left.' %}'" class="quote-sign-left" alt="">-->
+<!--                Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.-->
+<!--                <img src="{% static 'reveal/img/quote-sign-right.png' %}" class="quote-sign-right" alt="">-->
+<!--              </p>-->
+<!--              <img src="{% static 'reveal/img/testimonial-2.jpg' %}" class="testimonial-img" alt="">-->
+<!--              <h3>Sara Wilsson</h3>-->
+<!--              <h4>Designer</h4>-->
+<!--            </div>-->
+
+<!--            <div class="testimonial-item">-->
+<!--              <p>-->
+<!--                <img src="{% static 'reveal/img/quote-sign-left.png' %}" class="quote-sign-left" alt="">-->
+<!--                Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.-->
+<!--                <img src="{% static 'reveal/img/quote-sign-right.png' %}" class="quote-sign-right" alt="">-->
+<!--              </p>-->
+<!--              <img src="{% static 'reveal/img/testimonial-3.jpg' %}" class="testimonial-img" alt="">-->
+<!--              <h3>Jena Karlis</h3>-->
+<!--              <h4>Store Owner</h4>-->
+<!--            </div>-->
+
+<!--            <div class="testimonial-item">-->
+<!--              <p>-->
+<!--                <img src="{% static 'reveal/img/quote-sign-left.png' %}" class="quote-sign-left" alt="">-->
+<!--                Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.-->
+<!--                <img src="{% static 'reveal/img/quote-sign-right.png' %}" class="quote-sign-right" alt="">-->
+<!--              </p>-->
+<!--              <img src="{% static 'reveal/img/testimonial-4.jpg' %}" class="testimonial-img" alt="">-->
+<!--              <h3>Matt Brandon</h3>-->
+<!--              <h4>Freelancer</h4>-->
+<!--            </div>-->
+
+<!--            <div class="testimonial-item">-->
+<!--              <p>-->
+<!--                <img src="{% static 'reveal/img/quote-sign-left.png' %}" class="quote-sign-left" alt="">-->
+<!--                Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.-->
+<!--                <img src="{% static 'reveal/img/quote-sign-right.png' %}" class="quote-sign-right" alt="">-->
+<!--              </p>-->
+<!--              <img src="{% static 'reveal/img/testimonial-5.jpg' %}" class="testimonial-img" alt="">-->
+<!--              <h3>John Larson</h3>-->
+<!--              <h4>Entrepreneur</h4>-->
+<!--            </div>-->
+
+<!--        </div>-->
+
+      </div>
+    </section><!-- #testimonials -->
+
+    <!--==========================
+      Call To Action Section
+    ============================-->
+<!--    <section id="call-to-action" class="wow fadeInUp">-->
+<!--      <div class="container">-->
+<!--        <div class="row">-->
+<!--          <div class="col-lg-9 text-center text-lg-left">-->
+<!--            <h3 class="cta-title">Call To Action</h3>-->
+<!--            <p class="cta-text"> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>-->
+<!--          </div>-->
+<!--          <div class="col-lg-3 cta-btn-container text-center">-->
+<!--            <a class="cta-btn align-middle" href="#">Call To Action</a>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--      </div>-->
+<!--    </section>&lt;!&ndash; #call-to-action &ndash;&gt;-->
+
+    <!--==========================
+      Our Team Section
+    ============================-->
+    <section id="team" class="wow fadeInUp">
+      <div class="container">
+        <div class="section-header">
+          <h2>Our Team</h2>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="member">
+              <div class="pic"><img src="{% static 'reveal/img/1.jpg' %}" alt=""></div>
+              <div class="details">
+                <h4>Bhavsar Manthan</h4>
+                <span>Python Developer (Leader)</span>
+                <span>bhavsarmanthan15@gmail.com</span>
+                <div class="social">
+<!--                  <a href=""><i class="fa fa-twitter"></i></a>-->
+                  <a href="https://www.facebook.com/profile.php?id=100004564486320"><i class="fa fa-facebook"></i></a>
+                  <a href="https://accounts.google.com/ServiceLogin/identifier?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=AddSession"><i class="fa fa-google-plus"></i></a>
+<!--                  <a href=""><i class="fa fa-linkedin"></i></a>-->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="member">
+              <div class="pic"><img src="{% static 'reveal/img/2.jpeg' %}" alt=""></div>
+              <div class="details">
+                <h4>Patel Vatsal</h4>
+                <span>Web developer</span>
+                <span>patelvatsalmanojbhai1999@gmail.com</span>
+                <div class="social">
+<!--                  <a href=""><i class="fa fa-twitter"></i></a>-->
+                  <a href="https://www.facebook.com/patelvatsal.manojbhai"><i class="fa fa-facebook"></i></a>
+                  <a href="https://accounts.google.com/ServiceLogin/identifier?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=AddSession"><i class="fa fa-google-plus"></i></a>
+<!--                  <a href=""><i class="fa fa-linkedin"></i></a>-->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="member">
+              <div class="pic"><img src="{% static 'reveal/img/3.jpg' %}" alt=""></div>
+              <div class="details">
+                <h4>Gandhi Devam</h4>
+                <span>UI designer</span>
+                <span>devam.gandhi28@gmail.com</span>
+                <div class="social">
+<!--                  <a href=""><i class="fa fa-twitter"></i></a>-->
+                  <a href="https://www.facebook.com/devamgandhi28"><i class="fa fa-facebook"></i></a>
+                  <a href="https://accounts.google.com/ServiceLogin/identifier?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=AddSession"><i class="fa fa-google-plus"></i></a>
+<!--                  <a href=""><i class="fa fa-linkedin"></i></a>-->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="member">
+              <div class="pic"><img src="{% static 'reveal/img/4.jpeg' %}" alt=""></div>
+              <div class="details">
+                <h4>Patel Neel</h4>
+                <span>Web designer</span>
+                <span>pneel122@gmail.com</span>
+                <div class="social">
+<!--                  <a href=""><i class="fa fa-twitter"></i></a>-->
+                  <a href="https://www.facebook.com/profile.php?id=100003337404333"><i class="fa fa-facebook"></i></a>
+                  <a href="https://accounts.google.com/ServiceLogin/identifier?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=AddSession"><i class="fa fa-google-plus"></i></a>
+<!--                  <a href=""><i class="fa fa-linkedin"></i></a>-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- #team -->
+
+    <!--==========================
+      Contact Section
+    ============================-->
+    <section id="contact" class="wow fadeInUp">
+      <div class="container">
+        <div class="section-header">
+          <h2>Contact Us</h2>
+<!--          <p>Sed tamen tempor magna labore dolore dolor sint tempor duis magna elit veniam aliqua esse amet veniam enim export quid quid veniam aliqua eram noster malis nulla duis fugiat culpa esse aute nulla ipsum velit export irure minim illum fore</p>-->
+        </div>
+
+        <div class="row contact-info">
+
+          <div class="col-md-4">
+            <div class="contact-address">
+              <i class="ion-ios-location-outline"></i>
+              <h3>Address</h3>
+              <address>Shree Sa'd Vidhya Mandal Institute of Technology, Old Highway no. 8, Bharuch</address>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="contact-phone">
+              <i class="ion-ios-telephone-outline"></i>
+              <h3>Phone Number</h3>
+              <p><a href="tel:+155895548855">+91 7874130988</a></p>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="contact-email">
+              <i class="ion-ios-email-outline"></i>
+              <h3>Email</h3>
+              <p><a href="https://accounts.google.com/ServiceLogin/signinchooser?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin">bhavsarmanthan10@gmail.com</a></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="container mb-4">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3706.7972751078687!2d72.9994696143908!3d21.710595885632987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be020b105c6d7d1%3A0xaf488bedf63b33aa!2sShri%20S&#39;ad%20Vidya%20Mandal%20Institute%20Of%20Technology!5e0!3m2!1sen!2sin!4v1577794478376!5m2!1sen!2sin" width="1100" height="380" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
+      <center><div><img src="{% static 'reveal/img/QRSVMIT.png' %}" height="250" width="250"></div></center>
+      <center>Scan this QRCode for location on your google map</center>
+      </div>
+
+<!--      <div class="container">-->
+<!--        <div class="form">-->
+<!--          <div id="sendmessage">Your message has been sent. Thank you!</div>-->
+<!--          <div id="errormessage"></div>-->
+<!--          <form action="" method="post" role="form" class="contactForm">-->
+<!--            <div class="form-row">-->
+<!--              <div class="form-group col-md-6">-->
+<!--                <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />-->
+<!--                <div class="validation"></div>-->
+<!--              </div>-->
+<!--              <div class="form-group col-md-6">-->
+<!--                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" />-->
+<!--                <div class="validation"></div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--              <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" />-->
+<!--              <div class="validation"></div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--              <textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>-->
+<!--              <div class="validation"></div>-->
+<!--            </div>-->
+<!--            <div class="text-center"><button type="submit">Send Message</button></div>-->
+<!--          </form>-->
+<!--        </div>-->
+
+
+
+      </div>
+    </section><!-- #contact -->
+
+  </main>
+
+  <!--==========================
+    Footer
+  ============================-->
+  <footer id="footer">
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright . All Rights Reserved
+      </div>
+      <div class="credits">
+        <!--
+          All the links in the footer should remain intact.
+          You can delete the links only if you purchased the pro version.
+          Licensing information: https://bootstrapmade.com/license/
+          Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=Reveal
+        -->
+
+      </div>
+    </div>
+  </footer><!-- #footer -->
+
+  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+  <!-- JavaScript Libraries -->
+  <script src="{% static 'reveal/lib/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'reveal/lib/jquery/jquery-migrate.min.js' %}"></script>
+  <script src="{% static 'reveal/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'reveal/lib/easing/easing.min.js' %}"></script>
+  <script src="{% static 'reveal/lib/superfish/hoverIntent.js' %}"></script>
+  <script src="{% static 'reveal/lib/superfish/superfish.min.js' %}"></script>
+  <script src="{% static 'reveal/lib/wow/wow.min.js' %}"></script>
+  <script src="{% static 'reveal/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'reveal/lib/magnific-popup/magnific-popup.min.js' %}"></script>
+  <script src="{% static 'reveal/lib/sticky/sticky.js' %}"></script>
+
+  <!-- Contact Form JavaScript File -->
+  <script src="{% static 'reveal/contactform/contactform.js' %}"></script>
+
+  <!-- Template Main Javascript File -->
+  <script src="{% static 'reveal/js/main.js' %}"></script>
+
+</body>
+</html>

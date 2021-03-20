@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  .right {
+  position: absolute;
+  right: 0px;
+  width: 300px;
+  padding: 10px;
+}
+
+</style>
+<BR>
+<table class="table table-hover">
+  <thead>
+    <tr>
+
+      <th scope="col">Cus_Name</th>
+      <th scope="col">From_date</th>
+      <th scope="col">To_date</th>
+        <th scope="col">Ad_type</th>
+        <th scope="col">Days</th>
+        <th scope="col">Image</th>
+        <th scope="col">Pay_Status</th>
+      <th scope="col">Amount</th>
+            <th scope="col">unique id</th>
+        <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in data %}
+    <tr>
+
+      <td>{{i.banner.customer.first_name}}</td>
+      <td>{{i.banner.from_date}}</td>
+        <td>{{i.banner.to_date}}</td>
+      <td>{{i.banner.ad_type}}</td>
+      <td>{{i.banner.days }}</td>
+        <td><image src="{{i.banner.photo.url}}" height="50px" width="100px"> </image></td>
+      <td>{{i.banner.pay_status}}</td>
+      <td>{{i.pay}} Rs.</td>
+      <td>{{i.unid}}</td>
+
+
+        <td>
+          {% if i.banner.pay_status == 'approved' %}
+          <a class="btn btn-primary" href="{% url 'update_mapdata' i.id %}">Update</a>
+          {% else %}
+          {% endif %}
+
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

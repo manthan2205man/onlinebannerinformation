@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+$("#id_to_date").change(function () {
+    var startDate = document.getElementById("id_from_date").value;
+    var endDate = document.getElementById("id_to_date").value;
+
+
+    if ((Date.parse(startDate) >= Date.parse(endDate))) {
+    console.log('hello');
+        alert("End date should be greater than From date");
+        document.getElementById("to_date").value = "";
+    }
+});
+
+<!--new-->
+    $(function(){
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if(month < 10)
+            month = '0' + month.toString();
+        if(day < 10)
+            day = '0' + day.toString();
+
+      var booked_date={{data.to_date|date:"Y-m-d"}};
+
+      var b={{data.to_date|date:"Y"}}+'-'+{{data.to_date|date:"m"}}+'-'+{{data.to_date|date:"d"}};
+
+
+        var maxDate = year + '-' + month + '-' + day;
+
+    if ((Date.parse(maxDate) >= Date.parse(b))) {
+          $('#id_from_date').attr('min', maxDate);
+        }
+        else{
+          $('#id_from_date').attr('min',"{{data.to_date|date:"Y-m-d"}}");
+        }
+      });
+
+      $('#id_from_date').change(function(){
+
+
+        minDate: 0
+        $('#id_to_date').attr('min', $('#id_from_date').val());
+
+      });
+
+<!--new-->
+
+
+
+});
+ </script>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-5 col-md-offset-3 col-sm-4">
+
+      <br>
+  <div class="card border-dark mb-3">
+  <div class="card-body box">
+    <img src="{{data.photo.url}}" width="100%">
+
+      <div class="container">
+  <div class="row">
+      <div class="col-md-6">
+
+     <br><b>Publisher Name : </b>   <br>
+     <b> Type of banner :</b> <br>
+     <b>Location Address : </b><br>
+     <b>Height: </b><br>
+      <b> Width: </b><br>
+      <b>Cost Per Day: </b><br>
+      <b>Available from: </b><br>
+
+          </div>
+          <div class="col-md-6">
+             <br> {{data.publisher.first_name|title}}<br>
+              {{data.ad_type|title}}<br>
+              {{data.address|title}} <br>
+              {{data.height}} <br>
+              {{data.width}} <br>
+            {{data.price}} <br>
+            {{data.to_date}} <br>
+          </div>
+
+  </div>
+</div>
+          </div>
+      </div>
+
+          </div>
+
+
+    <div class="col-md-5 col-md-offset-3 col-sm-4">
+
+ {%if messages %}
+        {% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+    {% endfor %}
+  {% endif %}
+<div>
+<br>
+
+    <div class="form-group">
+    <label for="inputdefault">Publisher Name (Default)</label>
+    <input class="form-control" id="inputdefault" type="text" placeholder="{{ data.publisher.first_name }}" readonly="readonly">
+  </div>
+
+    <div class="form-group">
+    <label for="inputdefault">Customer Name (Default)</label>
+    <input class="form-control" type="text" placeholder="{{ request.user.first_name }}" readonly="readonly">
+  </div>
+
+
+      </div>
+
+
+      <form method="post" enctype="multipart/form-data" action="#">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary" id="btn" >Book Now</button>
+  </form>
+
+      </div>
+
+    </div>
+</div>
+
+{% endblock %}
